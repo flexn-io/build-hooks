@@ -1,0 +1,53 @@
+{
+    "name": "@flexn-io/build-hooks-monorepo",
+    "private": true,
+    "scripts": {
+        "bootstrap": "(rnv unlink|| true) && npx lerna bootstrap && yarn build",
+        "bootstrap-clean": "rm -rf ./node_modules; npx lerna clean --yes && yarn bootstrap",
+        "build": "lerna run build",
+        "watch-alt": "npx lerna run compile & npx lerna watch -- lerna run compile",
+        "watch": "npx lerna exec yarn watch --parallel",
+        "compile": "npx lerna run compile",
+        "lint": "npx eslint ./packages",
+        "test": "npx jest --coverage",
+        "test-watch": "npx jest --watch",
+        "sanity": "yarn compile && yarn lint && yarn test",
+        "prettier-write-all": "npx prettier '**/*.{js,jsx,ts,tsx,mjs,cjs,json,md}' --write --config .prettierrc.js",
+        "prettier-write-json": "npx prettier '**/{package.json,renative.plugins.json,renative.json}' --write --config .prettierrc.js"
+    },
+    "devDependencies": {
+        "@flexn/eslint-config": "0.1.5",
+        "@flexn/prettier-config": "0.1.4",
+        "@flexn/typescript": "0.3.0",
+        "@types/jest": "~27.0.2",
+        "@types/node": "~16.11.7",
+        "eslint-config-prettier": "8.8.0",
+        "husky": "4.2.5",
+        "jest": "27.3.1",
+        "lerna": "6.6.2",
+        "rnv": "0.37.0-canary.11",
+        "typescript": "4.9.5",
+        "prettier": "2.3.1",
+        "eslint": "8.40.0",
+        "@typescript-eslint/eslint-plugin": "~5.59.6",
+        "@typescript-eslint/parser": "~5.59.6",
+        "eslint-plugin-react": "~7.32.2"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "yarn sanity"
+        }
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint"
+        ],
+        "**/*.ts": "tsc-files --noEmit"
+    },
+    "workspaces": {
+        "packages": [
+            "packages/*"
+        ]
+    },
+    "resolutions": {}
+}
