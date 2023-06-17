@@ -40,7 +40,7 @@ const updateDeps = (
 };
 
 const updateRnvDeps = (pkgConfig: any, packageNamesAll: Array<string>, packageConfigs: any, semVer = '') => {
-    const { rnvFile, pkgFile, metaFile, rnvPath, metaPath, plugTempFile, plugTempPath } = pkgConfig;
+    const { rnvFile, pkgFile, metaFile, rnvPath, metaPath, plugTempFile, plugTempPath, templateConfigFile, templateConfigPath } = pkgConfig;
 
     packageNamesAll.forEach((v) => {
         const newVer = `${semVer}${packageConfigs[v].pkgFile?.version}`;
@@ -96,6 +96,26 @@ const updateRnvDeps = (pkgConfig: any, packageNamesAll: Array<string>, packageCo
                 FileUtils.writeFileSync(plugTempPath, output, 4, true);
             }
         }
+
+        if (templateConfigFile) {
+            let hasTemplateChanges = false;
+            const packageTemplateDepPlugin = plugTempFile.templateConfig?.packageTemplate?.dependencies?.[v];
+            const packageTemplateDevDepPlugin = plugTempFile.templateConfig?.packageTemplate?.devDependencies?.[v];
+
+            if (packageTemplateDepPlugin) {
+                packageTemplateDepPlugin.version = newVer;
+                hasTemplateChanges = true;
+            }
+            if (packageTemplateDevDepPlugin) {
+                packageTemplateDevDepPlugin.version = newVer;
+                hasTemplateChanges = true;
+            }
+
+            if (hasTemplateChanges) {
+                const output = Doctor.fixPackageObject(templateConfigFile);
+                FileUtils.writeFileSync(templateConfigPath, output, 4, true);
+            }
+        }
     });
 };
 
@@ -130,6 +150,12 @@ export const updateVersions = (c: any) => {
             if (fs.existsSync(_plugTempPath)) {
                 conf.plugTempPath = _plugTempPath;
                 conf.plugTempFile = readObjectSync(_plugTempPath);
+            }
+
+            const _templateConfigPath = path.join(dirPath, 'renative.template.json');
+            if (fs.existsSync(_templateConfigPath)) {
+                conf.templateConfigPath = _templateConfigPath;
+                conf.templateConfigFile = readObjectSync(_templateConfigPath);
             }
         }
         packageConfigs[conf.pkgName] = conf;
