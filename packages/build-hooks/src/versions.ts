@@ -1,12 +1,12 @@
 import path from 'path';
 import fs from 'fs';
-import { Doctor, FileUtils, Logger } from 'rnv';
+import { Doctor, FileUtils, Logger, Exec } from 'rnv';
 
 const { readObjectSync, writeFileSync } = FileUtils;
 const { logHook } = Logger;
 
 //TODO: not useful unless we use independent versioning
-// const VERSIONED_PACKAGES = ['@flexn/create', '@flexn/template'];
+const EXTERNAL_RNV_DEPENDENCIES = ['@flexn/plugins'];
 
 const updateDeps = (
     pkgConfig: any,
@@ -40,7 +40,17 @@ const updateDeps = (
 };
 
 const updateRnvDeps = (pkgConfig: any, packageNamesAll: Array<string>, packageConfigs: any, semVer = '') => {
-    const { rnvFile, pkgFile, metaFile, rnvPath, metaPath, plugTempFile, plugTempPath, templateConfigFile, templateConfigPath } = pkgConfig;
+    const {
+        rnvFile,
+        pkgFile,
+        metaFile,
+        rnvPath,
+        metaPath,
+        plugTempFile,
+        plugTempPath,
+        templateConfigFile,
+        templateConfigPath,
+    } = pkgConfig;
 
     packageNamesAll.forEach((v) => {
         const newVer = `${semVer}${packageConfigs[v].pkgFile?.version}`;
@@ -98,33 +108,63 @@ const updateRnvDeps = (pkgConfig: any, packageNamesAll: Array<string>, packageCo
         }
 
         if (templateConfigFile) {
-            let hasTemplateChanges = false;
-            const packageTemplateDepPlugin = plugTempFile.templateConfig?.packageTemplate?.dependencies?.[v];
-            const packageTemplateDevDepPlugin = plugTempFile.templateConfig?.packageTemplate?.devDependencies?.[v];
-
-            if (packageTemplateDepPlugin) {
-                packageTemplateDepPlugin.version = newVer;
-                hasTemplateChanges = true;
-            }
-            if (packageTemplateDevDepPlugin) {
-                packageTemplateDevDepPlugin.version = newVer;
-                hasTemplateChanges = true;
-            }
-
-            if (hasTemplateChanges) {
-                const output = Doctor.fixPackageObject(templateConfigFile);
-                FileUtils.writeFileSync(templateConfigPath, output, 4, true);
-            }
+            // leaving it for future packages that would need it
+            updateTemplateConfigDeps(templateConfigFile, templateConfigPath, v, newVer);
         }
     });
 };
 
-export const updateVersions = (c: any) => {
+const updateTemplateConfigDeps = (
+    templateConfigFile: any,
+    templateConfigPath: string,
+    pkg: string,
+    version: string
+) => {
+    let hasTemplateChanges = false;
+    const packageTemplateDep = templateConfigFile.templateConfig?.packageTemplate?.dependencies;
+    const packageTemplateDevDep = templateConfigFile.templateConfig?.packageTemplate?.devDependencies;
+
+    if (packageTemplateDep?.[pkg] && packageTemplateDep[pkg] !== version) {
+        packageTemplateDep[pkg] = version;
+        hasTemplateChanges = true;
+    }
+    if (packageTemplateDevDep?.[pkg] && packageTemplateDevDep[pkg] !== version) {
+        packageTemplateDevDep[pkg] = version;
+        hasTemplateChanges = true;
+    }
+
+    if (hasTemplateChanges) {
+        const output = Doctor.fixPackageObject(templateConfigFile);
+        FileUtils.writeFileSync(templateConfigPath, output, 4, true);
+    }
+};
+
+const updateExternalDeps = (pkgConfig: any, externalDependenciesVersions: Record<string, string>) => {
+    const { templateConfigFile, templateConfigPath } = pkgConfig;
+    if (templateConfigFile) {
+        Object.keys(externalDependenciesVersions).forEach((v) => {
+            updateTemplateConfigDeps(templateConfigFile, templateConfigPath, v, externalDependenciesVersions[v]);
+        });
+    }
+};
+
+export const updateVersions = async (c: any) => {
     const pkgDirPath = path.join(c.paths.project.dir, 'packages');
     const dirs = fs.readdirSync(pkgDirPath);
 
     const packageNamesAll: any = [];
     const packageConfigs: any = {};
+    const externalDependenciesVersions: any = {};
+
+    if (EXTERNAL_RNV_DEPENDENCIES) {
+        // get latest versions for external dependencies
+        await Promise.all(
+            EXTERNAL_RNV_DEPENDENCIES.map(async (v) => {
+                const latestPkgVersion = JSON.parse(await Exec.executeAsync(`npm show ${v} versions --json`)).pop();
+                externalDependenciesVersions[v] = latestPkgVersion;
+            })
+        );
+    }
 
     const parsePackages = (dirPath: string) => {
         const conf: any = {};
@@ -175,6 +215,7 @@ export const updateVersions = (c: any) => {
         updateDeps(pkgConfig, 'optionalDependencies', packageNamesAll, packageConfigs);
         updateDeps(pkgConfig, 'peerDependencies', packageNamesAll, packageConfigs, '^');
         updateRnvDeps(pkgConfig, packageNamesAll, packageConfigs);
+        updateExternalDeps(pkgConfig, externalDependenciesVersions);
     });
 };
 
