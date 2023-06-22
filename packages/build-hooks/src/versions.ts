@@ -5,7 +5,6 @@ import { Doctor, FileUtils, Logger, Exec } from 'rnv';
 const { readObjectSync, writeFileSync } = FileUtils;
 const { logHook } = Logger;
 
-//TODO: not useful unless we use independent versioning
 const EXTERNAL_RNV_DEPENDENCIES = ['@flexn/plugins'];
 
 const updateDeps = (
