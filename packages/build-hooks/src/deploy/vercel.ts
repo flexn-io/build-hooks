@@ -5,15 +5,19 @@ import { notifySlack } from '../slackNotifier';
 const { logSuccess, logError } = Logger;
 
 const vercelDeploy = async (config: any) => {
-    const { platform } = config;
-
+    const { platform, files } = config;
+    const isMonorepo = files.project.package.workspaces !== undefined;
     const title = Common.getConfigProp(config, config.platform, 'title');
     const { version } = config.files.project.package;
     const token = config.files.workspace.project?.configPrivate?.vercel?.token;
 
     // remove .vercel/project.json othwerise it will deploy to the last location
     try {
-        fs.unlinkSync(`${process.cwd()}/../../.vercel/project.json`);
+        fs.unlinkSync(
+            `${process.cwd()}${
+                isMonorepo ? `/../../` : `/platformBuilds/${config.runtime.appId}_${platform}/`
+            }.vercel/project.json`
+        );
     } catch (_) {
         // it's deleted most likely
     }
@@ -25,7 +29,9 @@ const vercelDeploy = async (config: any) => {
 
         await Exec.executeAsync(
             config,
-            `npx vercel ../../. --token=${
+            `npx vercel ${
+                isMonorepo ? `../../.` : `./platformBuilds/${config.runtime.appId}_${platform}/output`
+            } --token=${
                 process.env.VERCEL_TOKEN || token
             } --name=${vercelProjectName} --scope=flexn -f --confirm --prod`,
             {
