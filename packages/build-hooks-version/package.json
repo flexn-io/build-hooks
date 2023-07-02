@@ -1,0 +1,39 @@
+{
+    "name": "@flexn/build-hooks-version",
+    "version": "0.30.0",
+    "description": "Flexn Build Hooks Version manager",
+    "main": "lib/index",
+    "types": "lib/index",
+    "scripts": {
+        "watch": "tsc --watch --preserveWatchOutput",
+        "build": "yarn clean && yarn compile",
+        "clean": "rm -rf ./lib && rm -rf tsconfig.tsbuildinfo",
+        "compile": "tsc -b tsconfig.json"
+    },
+    "files": [
+        "lib",
+        "LICENSE",
+        "src"
+    ],
+    "repository": {
+        "directory": "packages/build-hooks-version",
+        "type": "git",
+        "url": "git+https://github.com/flexn-io/build-hooks.git"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "keywords": [],
+    "author": "Flexn",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/flexn-io/build-hooks/issues"
+    },
+    "homepage": "https://github.com/flexn-io/build-hooks#readme",
+    "peerDependencies": {
+        "rnv": "*"
+    },
+    "dependencies": {
+        "deepmerge": "3.2.0"
+    }
+}

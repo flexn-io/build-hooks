@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { Doctor, FileUtils, Logger, Exec } from 'rnv';
+import merge from 'deepmerge';
 
 const { readObjectSync, writeFileSync } = FileUtils;
 const { logHook } = Logger;
@@ -136,6 +137,33 @@ const updateTemplateConfigDeps = (
         const output = Doctor.fixPackageObject(templateConfigFile);
         FileUtils.writeFileSync(templateConfigPath, output, 4, true);
     }
+};
+
+export const setPackageVersions = (c: any, version: string, versionedPackages: Array<string>) => {
+    const v = {
+        version: version,
+    };
+    const pkgFolder = path.join(c.paths.project.dir, 'packages');
+    _updateJson(c.paths.project.package, v);
+
+    versionedPackages.forEach((pkgName: string) => {
+        _updateJson(path.join(pkgFolder, pkgName, 'package.json'), v);
+    });
+};
+
+const _updateJson = (pPath: string, updateObj: object) => {
+    const pObj = FileUtils.readObjectSync(pPath);
+
+    if (!pObj) {
+        throw new Error(`_updateJson called with unresolveable package.json path '${pPath}'`);
+    }
+
+    let obj;
+    if (pObj) {
+        obj = merge(pObj, updateObj);
+    }
+    const output = Doctor.fixPackageObject(obj);
+    FileUtils.writeFileSync(pPath, output, 4, true);
 };
 
 const updateExternalDeps = (pkgConfig: any, externalDependenciesVersions: Record<string, string>) => {
