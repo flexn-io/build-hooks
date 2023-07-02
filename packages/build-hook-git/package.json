@@ -1,7 +1,7 @@
 {
-    "name": "@flexn/build-hooks",
+    "name": "@flexn/build-hooks-git",
     "version": "0.30.0",
-    "description": "Flexn Build Hooks",
+    "description": "Flexn Build Hook for Git",
     "main": "lib/index",
     "types": "lib/index",
     "scripts": {
@@ -16,7 +16,7 @@
         "src"
     ],
     "repository": {
-        "directory": "packages/build-hooks",
+        "directory": "packages/build-hooks-git",
         "type": "git",
         "url": "git+https://github.com/flexn-io/build-hooks.git"
     },
@@ -34,9 +34,6 @@
         "rnv": "*"
     },
     "dependencies": {
-        "lodash-es": "4.17.21",
-        "ts-object-utils": "0.0.5",
-        "isomorphic-unfetch": "^3.1.0",
-        "googleapis": "39"
+        "simple-git": "3.12.0"
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "@flexn-io/build-hooks-monorepo",
+    "name": "@flexn/build-hooks-monorepo",
     "private": true,
     "scripts": {
         "bootstrap": "(rnv unlink|| true) && npx lerna bootstrap && yarn build",
@@ -13,19 +13,24 @@
         "test-watch": "npx jest --watch",
         "sanity": "yarn compile && yarn lint && yarn test",
         "prettier-write-all": "npx prettier '**/*.{js,jsx,ts,tsx,mjs,cjs,json,md}' --write --config .prettierrc.js",
-        "prettier-write-json": "npx prettier '**/{package.json,renative.plugins.json,renative.json}' --write --config .prettierrc.js"
+        "prettier-write-json": "npx prettier '**/{package.json,renative.plugins.json,renative.json}' --write --config .prettierrc.js",
+        "deploy:prod": "lerna version --no-private && lerna publish from-package",
+        "deploy:preview": "lerna version --no-private && lerna publish from-package --dist-tag preview",
+        "deploy:canary": "lerna version --no-private && lerna publish from-package --dist-tag canary",
+        "deploy:feat": "lerna version --no-private && lerna publish from-package --dist-tag feat",
+        "deploy:lts": "lerna version --no-private && lerna publish from-package --dist-tag lts"
     },
     "devDependencies": {
-        "@flexn/eslint-config": "0.1.5",
-        "@flexn/prettier-config": "0.1.4",
-        "@flexn/typescript": "0.3.0",
+        "@flexn/eslint-config": "1.0.0",
+        "@flexn/prettier-config": "1.0.0",
+        "@flexn/typescript-config": "1.0.0",
         "@types/jest": "~27.0.2",
         "@types/node": "~16.11.7",
         "eslint-config-prettier": "8.8.0",
         "husky": "4.2.5",
         "jest": "27.3.1",
         "lerna": "6.6.2",
-        "rnv": "0.37.0-canary.11",
+        "rnv": "0.37.0-rc.9",
         "typescript": "4.9.5",
         "prettier": "2.3.1",
         "eslint": "8.40.0",
