@@ -1,7 +1,7 @@
 {
-    "name": "@flexn/build-hooks-git",
+    "name": "@flexn/build-hooks-monorepo",
     "version": "0.1.0",
-    "description": "Flexn Build Hook for Git",
+    "description": "Flexn Build Hooks Version manager",
     "main": "lib/index",
     "types": "lib/index",
     "scripts": {
@@ -16,7 +16,7 @@
         "src"
     ],
     "repository": {
-        "directory": "packages/build-hooks-git",
+        "directory": "packages/build-hooks-monorepo",
         "type": "git",
         "url": "git+https://github.com/flexn-io/build-hooks.git"
     },
@@ -34,6 +34,6 @@
         "rnv": "*"
     },
     "dependencies": {
-        "simple-git": "3.12.0"
+        "deepmerge": "3.2.0"
     }
 }
