@@ -1,17 +1,18 @@
 import path from 'path';
 import fs from 'fs';
 import { FileUtils } from 'rnv';
+import { MonoPackageConfig, MonorepoConfig } from './types';
 const { readObjectSync } = FileUtils;
 
-const parseRenativeProject = (dirPath: string) => {
-    const conf: any = {};
+const parseRenativeProject = (dirPath: string): MonoPackageConfig => {
+    const conf: MonoPackageConfig = {};
 
     if (fs.statSync(dirPath).isDirectory()) {
         const _pkgPath = path.join(dirPath, 'package.json');
         if (fs.existsSync(_pkgPath)) {
             conf.pkgFile = readObjectSync(_pkgPath);
             conf.pkgPath = _pkgPath;
-            conf.pkgName = conf.pkgFile.name;
+            conf.pkgName = conf.pkgFile?.name;
         }
         const _rnvPath = path.join(dirPath, 'renative.json');
         if (fs.existsSync(_rnvPath)) {
@@ -38,24 +39,30 @@ const parseRenativeProject = (dirPath: string) => {
     return conf;
 };
 
-export const parseRenativeProjects = (packagesDirs: string[], projectDirs?: string[]) => {
-    const packageNamesAll: any = [];
-    const packageConfigs: any = {};
+export const parseMonorepo = (packagesDirs: string[], projectDirs?: string[]): MonorepoConfig => {
+    // const packageNamesAll: any = [];
+    const monoConfig: MonorepoConfig = {};
 
     packagesDirs.forEach((pkgDirPath) => {
         const dirs = fs.readdirSync(pkgDirPath);
 
         dirs.forEach((dir) => {
             const conf = parseRenativeProject(path.join(pkgDirPath, dir));
-            packageConfigs[conf.pkgName] = conf;
-            packageNamesAll.push(conf.pkgName);
+            if (conf.pkgName) {
+                monoConfig[conf.pkgName] = conf;
+            }
+
+            // packageNamesAll.push(conf.pkgName);
         });
     });
     if (projectDirs) {
         projectDirs.forEach((projectDir) => {
             const conf = parseRenativeProject(projectDir);
-            packageConfigs[conf.pkgName] = conf;
-            packageNamesAll.push(conf.pkgName);
+            if (conf.pkgName) {
+                monoConfig[conf.pkgName] = conf;
+            }
+
+            // packageNamesAll.push(conf.pkgName);
         });
     }
 
@@ -63,5 +70,5 @@ export const parseRenativeProjects = (packagesDirs: string[], projectDirs?: stri
     //     packageNamesAsArray: packageNamesAll,
     //     configs: packageConfigs,
     // };
-    return packageConfigs;
+    return monoConfig;
 };
