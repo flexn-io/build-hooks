@@ -1,0 +1,1 @@
+export { notifySlack } from './slackNotifier';

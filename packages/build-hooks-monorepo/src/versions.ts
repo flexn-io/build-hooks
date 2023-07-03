@@ -1,11 +1,9 @@
 import path from 'path';
 import fs from 'fs';
-import { Doctor, FileUtils, Logger, Exec } from 'rnv';
+import { Doctor, FileUtils, Exec } from 'rnv';
+import { parsePackages } from './parsePackages';
 
 const { readObjectSync, writeFileSync } = FileUtils;
-const { logHook } = Logger;
-
-const EXTERNAL_RNV_DEPENDENCIES = ['@flexn/plugins'];
 
 const updateDeps = (
     pkgConfig: any,
@@ -151,57 +149,9 @@ export const updateVersions = async (c: any) => {
     const pkgDirPath = path.join(c.paths.project.dir, 'packages');
     const dirs = fs.readdirSync(pkgDirPath);
 
-    const packageNamesAll: any = [];
-    const packageConfigs: any = {};
     const externalDependenciesVersions: any = {};
 
-    if (EXTERNAL_RNV_DEPENDENCIES) {
-        // get latest versions for external dependencies
-        await Promise.all(
-            EXTERNAL_RNV_DEPENDENCIES.map(async (v) => {
-                const latestPkgVersion = JSON.parse(await Exec.executeAsync(`npm show ${v} versions --json`)).pop();
-                externalDependenciesVersions[v] = latestPkgVersion;
-            })
-        );
-    }
-
-    const parsePackages = (dirPath: string) => {
-        const conf: any = {};
-
-        if (fs.statSync(dirPath).isDirectory()) {
-            const _pkgPath = path.join(dirPath, 'package.json');
-            if (fs.existsSync(_pkgPath)) {
-                conf.pkgFile = readObjectSync(_pkgPath);
-                conf.pkgPath = _pkgPath;
-                conf.pkgName = conf.pkgFile.name;
-            }
-            const _rnvPath = path.join(dirPath, 'renative.json');
-            if (fs.existsSync(_rnvPath)) {
-                conf.rnvPath = _rnvPath;
-                conf.rnvFile = readObjectSync(_rnvPath);
-            }
-            const _metaPath = path.join(dirPath, 'metadata.json');
-            if (fs.existsSync(_metaPath)) {
-                conf.metaPath = _metaPath;
-                conf.metaFile = readObjectSync(_metaPath);
-            }
-            const _plugTempPath = path.join(dirPath, '/pluginTemplates/renative.plugins.json');
-            if (fs.existsSync(_plugTempPath)) {
-                conf.plugTempPath = _plugTempPath;
-                conf.plugTempFile = readObjectSync(_plugTempPath);
-            }
-
-            const _templateConfigPath = path.join(dirPath, 'renative.template.json');
-            if (fs.existsSync(_templateConfigPath)) {
-                conf.templateConfigPath = _templateConfigPath;
-                conf.templateConfigFile = readObjectSync(_templateConfigPath);
-            }
-        }
-        packageConfigs[conf.pkgName] = conf;
-        packageNamesAll.push(conf.pkgName);
-    };
-
-    parsePackages(c.paths.project.dir);
+    const pkgConfig = parsePackages(c.paths.project.dir);
 
     dirs.forEach((dir) => {
         parsePackages(path.join(pkgDirPath, dir));
@@ -216,10 +166,4 @@ export const updateVersions = async (c: any) => {
         updateRnvDeps(pkgConfig, packageNamesAll, packageConfigs);
         updateExternalDeps(pkgConfig, externalDependenciesVersions);
     });
-};
-
-export const prePublish = async (c: any) => {
-    logHook('bump plugins');
-    await updateVersions(c);
-    return true;
 };

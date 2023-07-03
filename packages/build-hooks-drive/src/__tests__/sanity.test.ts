@@ -1,4 +1,4 @@
-describe('Test template', () => {
+describe('Test', () => {
     beforeEach(() => {
         console.log('Testing');
     });
