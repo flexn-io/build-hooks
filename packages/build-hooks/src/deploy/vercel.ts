@@ -13,7 +13,7 @@ const vercelDeploy = async (config: any) => {
 
     // remove .vercel/project.json othwerise it will deploy to the last location
     try {
-        fs.unlinkSync(`${process.cwd()}/platformBuilds/${config.runtime.appId}_${platform}/.vercel/project.json`);
+        fs.unlinkSync(`${process.cwd()}/../../.vercel/project.json`);
     } catch (_) {
         // it's deleted most likely
     }
@@ -25,7 +25,7 @@ const vercelDeploy = async (config: any) => {
 
         await Exec.executeAsync(
             config,
-            `npx vercel ./platformBuilds/${config.runtime.appId}_${platform}/output --token=${
+            `npx vercel ../../. --token=${
                 process.env.VERCEL_TOKEN || token
             } --name=${vercelProjectName} --scope=flexn -f --confirm --prod`,
             {
