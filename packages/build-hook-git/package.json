@@ -1,6 +1,6 @@
 {
     "name": "@flexn/build-hooks-git",
-    "version": "0.30.0",
+    "version": "0.31.1-canary.0",
     "description": "Flexn Build Hook for Git",
     "main": "lib/index",
     "types": "lib/index",
