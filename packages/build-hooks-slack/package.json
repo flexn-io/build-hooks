@@ -1,5 +1,5 @@
 {
-    "name": "@flexn/build-hooks-vercel",
+    "name": "@flexn/build-hooks-slack",
     "version": "0.1.0",
     "description": "Flexn Build Hooks Version manager",
     "main": "lib/index",

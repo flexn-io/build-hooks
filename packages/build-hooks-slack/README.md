@@ -1,1 +1,1 @@
-# @flexn/build-hooks-vercel
+# @flexn/build-hooks-slack

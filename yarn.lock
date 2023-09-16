@@ -6224,11 +6224,6 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash-es@4.17.21:
-  version "4.17.21"
-  resolved "https://registry.npmjs.org/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
-  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
-
 lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
@@ -8275,19 +8270,10 @@ sigstore@^1.0.0, sigstore@^1.3.0, sigstore@^1.4.0:
     "@sigstore/tuf" "^1.0.3"
     make-fetch-happen "^11.0.1"
 
-simple-git@2.48.0:
-  version "2.48.0"
-  resolved "https://registry.npmjs.org/simple-git/-/simple-git-2.48.0.tgz#87c262dba8f84d7b96bb3a713e9e34701c1f6e3b"
-  integrity sha512-z4qtrRuaAFJS4PUd0g+xy7aN4y+RvEt/QTJpR184lhJguBA1S/LsVlvE/CM95RsYMOFJG3NGGDjqFCzKU19S/A==
-  dependencies:
-    "@kwsites/file-exists" "^1.1.1"
-    "@kwsites/promise-deferred" "^1.1.1"
-    debug "^4.3.2"
-
-simple-git@3.12.0:
-  version "3.12.0"
-  resolved "https://registry.npmjs.org/simple-git/-/simple-git-3.12.0.tgz#12fa8e762d8d9629fb1c72a0e2b4e6ae5b1f11e8"
-  integrity sha512-cy1RSRFHGZSrlYa3MnUuNVOXLUdifEZD2X8+AZjg8mKCdRvtCFSga6acq5N2g0ggb8lH3jBi369MrFZ+Y6sfsA==
+simple-git@^3.16.0:
+  version "3.19.1"
+  resolved "https://registry.npmjs.org/simple-git/-/simple-git-3.19.1.tgz#ff9c021961a3d876a1b115b1893bed9a28855d30"
+  integrity sha512-Ck+rcjVaE1HotraRAS8u/+xgTvToTuoMkT9/l9lvuP5jftwnYUp6DwuJzsKErHgfyRk8IB8pqGHWEbM3tLgV1w==
   dependencies:
     "@kwsites/file-exists" "^1.1.1"
     "@kwsites/promise-deferred" "^1.1.1"
@@ -8839,11 +8825,6 @@ trim-newlines@^3.0.0:
   version "3.0.1"
   resolved "https://registry.npmjs.org/trim-newlines/-/trim-newlines-3.0.1.tgz#260a5d962d8b752425b32f3a7db0dcacd176c144"
   integrity sha512-c1PTsA3tYrIsLGkJkzHF+w9F2EyxfXGo4UyJc4pFL++FMjnq0HJS69T3M7d//gKrFKwy429bouPescbjecU+Zw==
-
-ts-object-utils@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/ts-object-utils/-/ts-object-utils-0.0.5.tgz#95361cdecd7e52167cfc5e634c76345e90a26077"
-  integrity sha512-iV0GvHqOmilbIKJsfyfJY9/dNHCs969z3so90dQWsO1eMMozvTpnB1MEaUbb3FYtZTGjv5sIy/xmslEz0Rg2TA==
 
 tsconfig-paths@^4.1.2:
   version "4.2.0"
