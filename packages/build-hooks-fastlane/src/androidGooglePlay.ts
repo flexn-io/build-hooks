@@ -12,14 +12,21 @@ const androidGPDeploy = async (c: any) => {
     const appPath = path.join(c.paths.project.builds.dir, `${c.runtime.appId}_${c.platform}`);
     const aabPath = `${path.join(appPath, `app/build/outputs/bundle/release/app-release.aab`)}`;
 
+    const deployTrack = Common.getConfigProp(c, c.platform, 'deployTrack') || 'alpha';
+    const releaseStatus = Common.getConfigProp(c, c.platform, 'releaseStatus');
+    const credentialsFileName =
+        Common.getConfigProp(c, c.platform, 'credentialsFileName') || 'play-store-credentials.json';
+
     // const url = `https://play.google.com/apps/testing/${Common.getConfigProp(c, c.platform, 'id')}`;
 
     try {
         await Exec.executeAsync(
             c,
-            `fastlane supply --aab ${aabPath} --track alpha --json_key ${path.join(
+            `fastlane supply --aab ${aabPath} --track ${deployTrack} ${
+                releaseStatus ? `--release_status ${releaseStatus}` : ''
+            } --json_key ${path.join(
                 c.paths.workspace.project.dir,
-                'play-store-credentials.json'
+                credentialsFileName
             )} --package_name ${Common.getConfigProp(c, c.platform, 'id')} `,
             {
                 env: process.env,
