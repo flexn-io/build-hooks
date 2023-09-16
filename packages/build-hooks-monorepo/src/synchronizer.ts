@@ -2,6 +2,21 @@ import path from 'path';
 import { Doctor, FileUtils } from 'rnv';
 import { MonorepoConfig } from './types';
 
+const patchDependency = (newVer, depKey, pkgFile, semVer) => {
+    let hasChanges = false;
+    const currVer = pkgFile?.[depKey]?.[v];
+    if (currVer) {
+        const newVer = `${semVer}${packageConfigs[v].pkgFile?.version}`;
+
+        if (currVer !== newVer) {
+            console.log('Found linked dependency to update:', v, currVer, newVer);
+            hasChanges = true;
+            pkgFile[depKey][v] = newVer;
+        }
+    }
+    return hasChanges;
+};
+
 export const syncAllDependencies = (config: MonorepoConfig) => {
     const monoConfigArr = Object.values(config);
 
